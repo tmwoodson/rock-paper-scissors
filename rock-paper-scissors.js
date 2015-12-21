@@ -20,8 +20,7 @@ var updateTurn = function(session) {
 };
 
 //Utility function to return the hash of template helpers for each player
-var getHelpers = function(playerNumber, session) {
-  var opponentNumber = getOpponentNumber(playerNumber);
+var getHelpers = function(session) {
  
   return {
     myData: function() {
@@ -38,6 +37,30 @@ var getHelpers = function(playerNumber, session) {
 
     hasTurn: function() {
       return session.get('hasTurn');
+    },
+
+    playerNumber: function() {
+      return session.get('player').player;
+    },
+
+    opponentNumber: function() {
+      return getOpponentNumber(session.get('player').player);
+    },
+
+    playerScore: function() {
+      return session.get('player').score;
+    },
+
+    opponentScore: function() {
+      return session.get('opponent').score;
+    },
+
+    playerTurn: function() {
+      return session.get('player').turn;
+    },
+
+    opponentTurn: function() {
+      return session.get('opponent').turn;
     }
   };
 };
@@ -63,7 +86,8 @@ var onButtonClick = function(e, session) {
 };
 
 //Utility function to initialize a player's session and data
-var init = function(playerNumber, session) {
+var init = function(session) {
+    var playerNumber = parseInt(localStorage.playerNumber);
     var opponentNumber = getOpponentNumber(playerNumber);
 
     session.set('hasTurn', false);
@@ -116,28 +140,16 @@ var init = function(playerNumber, session) {
 
 if (Meteor.isClient) {
 
-  Template.player1.helpers(getHelpers(1, Session));
+  Template.player.helpers(getHelpers(Session));
 
-  Template.player2.helpers(getHelpers(2, Session));
-
-  Template.player1.events({
+  Template.player.events({
     'click button': function (e) {
       onButtonClick(e, Session);
     }
   });
 
-  Template.player2.events({
-    'click button': function (e) {
-      onButtonClick(e, Session);   
-    }
-  });
-
-  Template.player1.onCreated(function() {
-    init(1, Session);
-  });
-
-  Template.player2.onCreated(function() {
-    init(2, Session);
+  Template.player.onCreated(function() {
+     init(Session);
   });
 
 }
@@ -199,8 +211,14 @@ if (Meteor.isServer) {
 }
 
 // Routes
-Router.route('/player1');
-Router.route('/player2');
+Router.route('/player1', function() {
+  localStorage.playerNumber = 1;
+  this.render('player');
+});
+Router.route('/player2', function() {
+  localStorage.playerNumber = 2;
+  this.render('player');
+});
 Router.route('/', {
     template: 'home'
 });

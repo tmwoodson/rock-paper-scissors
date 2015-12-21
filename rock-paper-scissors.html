@@ -3,58 +3,28 @@
   <button>Click Me</button>
 </template>
 
-<template name="player1">
-  <h2>Hello, Player 1.</h2>
+<template name="player">
+  <h2>Hello, Player {{playerNumber}}.</h2>
   {{#if opponentMissing}}
-    <p>Waiting for Player 2 to arrive.</p>
+    <p>Waiting for Player {{opponentNumber}} to arrive.</p>
   {{else}}
-    {{#each myData}}
-      {{> myStats}}
-    {{/each}}
-    {{#each opponentData}}
-      {{> opponentStats}}
-    {{/each}}
+    <p>You are on turn {{playerTurn}} and have a score of {{playerScore}}.</p>
+    <p>Your opponent is on turn {{opponentTurn}} and has a score of {{opponentScore}}.</p>
   {{/if}}
   {{#if hasTurn}}
     <p>Play the next round.</p>
     {{> choices}}
   {{else}}
-    <p>Waiting for player 2 to make a choice.</p>
+    <p>Waiting for player {{opponentNumber}} to make a choice.</p>
   {{/if}}
 </template>
 
-<template name="player2">
-  <h2>Hello, Player 2.</h2>
-  {{#if opponentMissing}}
-    <p>Waiting for Player 1</p>
-  {{else}}
-    {{#each myData}}
-      {{> myStats}}
-    {{/each}}
-    {{#each opponentData}}
-      {{> opponentStats}}
-    {{/each}}
-  {{/if}}
-  {{#if hasTurn}}
-    <p>Play the next round.</p>
-    {{> choices}}
-  {{else}}
-    <p>Waiting for player 1 to make a choice.</p>
-  {{/if}}
-</template>
 
 <template name="layout">
     <h1>Rock Paper Scissors</h1>
     {{> yield}}
 </template>
 
-<template name="myStats">
-  <p>You are on turn {{turn}} and have a score of {{score}}.</p>
-</template>
-
-<template name="opponentStats">
-  <p>Your opponent is on {{turn}} and has a score of {{score}}.</p>
-</template>
 
 <template name="choices">
 	<span class="game-choices">
