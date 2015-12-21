@@ -5,6 +5,11 @@
 
 <template name="player">
   <div class="greeting"><h2>Hello, Player {{playerNumber}}.</h2></div>
+  {{#if resultReady}}
+    <div class="results-wrapper">
+      You {{getLastResult}} the last round.
+    </div>
+  {{/if}}
   {{#if opponentMissing}}
     <div class="waiting-message"><p>Waiting for Player {{opponentNumber}} to arrive.</p></div>
   {{else}}
@@ -19,24 +24,19 @@
   {{else}}
     <div class="waiting-message"><p>Waiting for player {{opponentNumber}} to make a choice.</p></div>
   {{/if}}
-  {{#if resultReady}}
-    <div class="results-wrapper">
-      You {{getLastResult}} the last round.
-    </div>
-  {{/if}}
 </template>
 
 
 <template name="layout">
-    <h1>Rock Paper Scissors</h1>
+    <h1 class="title">Rock Paper Scissors</h1>
     {{> yield}}
 </template>
 
 
 <template name="choices">
-	<span class="game-choices">
+	<div class="game-choices">
 		<div class="button-wrapper"><button class="rock">Rock</button></div>
 		<div class="button-wrapper"><button class="paper">Paper</button></div>
 		<div class="button-wrapper"><button class="scissors">Scissors</button></div>
-	</span>
+	</div>
 </template>

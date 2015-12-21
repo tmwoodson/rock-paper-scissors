@@ -1,1 +1,26 @@
-/* CSS declarations go here */
+body {
+	font-family: sans-serif;
+	text-align: center;
+}
+
+.title {
+}
+
+.greeting {
+}
+
+.game-choices {
+}
+
+.button-wrapper {
+    display: inline-block;
+    padding: 20px;
+}
+
+button {
+    font-size: larger;
+    border-radius: 4px;
+    width: 150px;
+    height: 75px;
+    cursor: pointer;
+}
