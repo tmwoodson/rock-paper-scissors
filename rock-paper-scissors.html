@@ -18,6 +18,8 @@
   {{#if hasTurn}}
     <p>Play the next round.</p>
     {{> choices}}
+  {{else}}
+    <p>Waiting for player 2 to make a choice.</p>
   {{/if}}
 </template>
 
@@ -36,6 +38,8 @@
   {{#if hasTurn}}
     <p>Play the next round.</p>
     {{> choices}}
+  {{else}}
+    <p>Waiting for player 1 to make a choice.</p>
   {{/if}}
 </template>
 
