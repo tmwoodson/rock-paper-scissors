@@ -5,19 +5,57 @@
 
 <template name="player1">
   <h2>Hello, Player 1.</h2>
-  <button>Play</button>
-  <p> My stats: {{myStats}} </p>
-  <p> Their stats: {{opponentStats}}</p>
+  {{#if opponentMissing}}
+    <p>Waiting for Player 2</p>
+  {{else}}
+    {{#each myData}}
+      {{> myStats}}
+    {{/each}}
+    {{#each opponentData}}
+      {{> opponentStats}}
+    {{/each}}
+  {{/if}}
+  {{#if hasTurn}}
+    <p>Play the next round.</p>
+    {{> choices}}
+  {{/if}}
 </template>
 
 <template name="player2">
   <h2>Hello, Player 2.</h2>
-  <button>Play</button>
-  <p> My stats: {{myStats}} </p>
-  <p> Their stats: {{opponentStats}}</p>
+  {{#if opponentMissing}}
+    <p>Waiting for Player 1</p>
+  {{else}}
+    {{#each myData}}
+      {{> myStats}}
+    {{/each}}
+    {{#each opponentData}}
+      {{> opponentStats}}
+    {{/each}}
+  {{/if}}
+  {{#if hasTurn}}
+    <p>Play the next round.</p>
+    {{> choices}}
+  {{/if}}
 </template>
 
 <template name="layout">
     <h1>Rock Paper Scissors</h1>
     {{> yield}}
+</template>
+
+<template name="myStats">
+  <p>You are on turn {{turn}} and have a score of {{score}}.</p>
+</template>
+
+<template name="opponentStats">
+  <p>Your opponent is on {{turn}} and has a score of {{score}}.</p>
+</template>
+
+<template name="choices">
+	<span class="game-choices">
+		<div class="button-wrapper"><button class="rock">Rock</button></div>
+		<div class="button-wrapper"><button class="paper">Paper</button></div>
+		<div class="button-wrapper"><button class="scissors">Scissors</button></div>
+	</span>
 </template>
