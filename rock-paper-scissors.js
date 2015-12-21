@@ -1,17 +1,12 @@
 Players = new Mongo.Collection('players');
 Rounds = new Mongo.Collection('rounds');
 
+// getOpponentNumber(1) = 2; getOpponentNumber(2) = 1
 var getOpponentNumber = function(playerNumber) {
-  var result;
-  if (playerNumber === 1 || playerNumber === '1') {
-    result = 2;
-  } else {
-    result = 1;
-  }
-  return result;
+  return (playerNumber === 1 || playerNumber === '1') ? 2 : 1;
 };
 
-//Utility function to update function that says whether this player can take a turn
+//Utility function to determine whether current player can take a turn
 var updateTurn = function(session) {
   var player = session.get('player');
   var opponent = session.get('opponent');
@@ -23,14 +18,6 @@ var updateTurn = function(session) {
 var getHelpers = function(session) {
  
   return {
-    myData: function() {
-      return [session.get('player')];
-    },
-
-    opponentData: function() {
-      return [session.get('opponent')];
-    },
-
     opponentMissing: function() {
       return session.get('opponentMissing');
     },
@@ -61,8 +48,28 @@ var getHelpers = function(session) {
 
     opponentTurn: function() {
       return session.get('opponent').turn;
+    },
+
+    resultReady: function() {
+      var roundStats = session.get('currentRound');
+      return roundStats.result !== null;
+    },
+
+    getLastResult: function() {
+      var roundStats = session.get('currentRound');
+      var result = null;
+      if (roundStats.result) {
+        if (roundStats.result === 'tie') {
+          result = 'tied';
+        } else if (roundStats.result === session.get('player')._id) {
+          result = 'won';
+        } else {
+          result = 'lost';
+        }
+      }
+      return result;
     }
-  };
+  }
 };
 
 //Utility function that returns the id of a round's winner
@@ -128,7 +135,6 @@ var init = function(session) {
     var rounds = Rounds.find({});
     var roundsHandle = rounds.observeChanges({
       added: function(id, fields) {
-        session.set('currentRound', fields);
         updateTurn(session);
       },
       changed: function(id, fields) {

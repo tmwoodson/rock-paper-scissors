@@ -4,18 +4,25 @@
 </template>
 
 <template name="player">
-  <h2>Hello, Player {{playerNumber}}.</h2>
+  <div class="greeting"><h2>Hello, Player {{playerNumber}}.</h2></div>
   {{#if opponentMissing}}
-    <p>Waiting for Player {{opponentNumber}} to arrive.</p>
+    <div class="waiting-message"><p>Waiting for Player {{opponentNumber}} to arrive.</p></div>
   {{else}}
-    <p>You are on turn {{playerTurn}} and have a score of {{playerScore}}.</p>
-    <p>Your opponent is on turn {{opponentTurn}} and has a score of {{opponentScore}}.</p>
+    <div class="stats-wrapper">
+      <div class="player-stats"><p>You are on turn {{playerTurn}} and have a score of {{playerScore}}.</p></div>
+      <div class="opponent-stats"><p>Your opponent is on turn {{opponentTurn}} and has a score of {{opponentScore}}.</p></div>
+    </div>
   {{/if}}
   {{#if hasTurn}}
-    <p>Play the next round.</p>
+    <div class="play-message"><p>Play the next round.</p></div>
     {{> choices}}
   {{else}}
-    <p>Waiting for player {{opponentNumber}} to make a choice.</p>
+    <div class="waiting-message"><p>Waiting for player {{opponentNumber}} to make a choice.</p></div>
+  {{/if}}
+  {{#if resultReady}}
+    <div class="results-wrapper">
+      You {{getLastResult}} the last round.
+    </div>
   {{/if}}
 </template>
 
