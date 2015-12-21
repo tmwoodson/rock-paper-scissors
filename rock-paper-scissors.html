@@ -6,7 +6,7 @@
 <template name="player1">
   <h2>Hello, Player 1.</h2>
   {{#if opponentMissing}}
-    <p>Waiting for Player 2</p>
+    <p>Waiting for Player 2 to arrive.</p>
   {{else}}
     {{#each myData}}
       {{> myStats}}
