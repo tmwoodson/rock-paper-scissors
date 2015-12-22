@@ -161,14 +161,13 @@ if (Meteor.isClient) {
 }
 
 var updatePlayerScores = function(id1, id2, result) {
-  console.log('updating player scores:', arguments)
   if (result === 'tie') {
     Players.update(id1, {$inc: {score: 1} });
     Players.update(id2, {$inc: {score: 1} });
   } else if (result === id1) {
     Players.update(id1, {$inc: {score: 1} });
   } else {
-    Players.update(id12, {$inc: {score: 1} });
+    Players.update(id2, {$inc: {score: 1} });
   }
 };
 

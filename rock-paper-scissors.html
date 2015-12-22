@@ -22,7 +22,9 @@
     <div class="play-message"><p>Play the next round.</p></div>
     {{> choices}}
   {{else}}
-    <div class="waiting-message"><p>Waiting for player {{opponentNumber}} to make a choice.</p></div>
+    {{#unless opponentMissing}}
+      <div class="waiting-message"><p>Waiting for player {{opponentNumber}} to make a choice.</p></div>
+    {{/unless}}
   {{/if}}
 </template>
 
