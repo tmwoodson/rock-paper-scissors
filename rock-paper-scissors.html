@@ -5,32 +5,32 @@
 
 <template name="player">
   <div class="greeting"><h2>Hello, Player {{playerNumber}}.</h2></div>
-  {{#if resultReady}}
-    <div class="results-wrapper">
-      You {{getLastResult}} the last round.
-    </div>
-  {{/if}}
   {{#if opponentMissing}}
-    <div class="waiting-message"><p>Waiting for Player {{opponentNumber}} to arrive.</p></div>
+    <div class="waiting-message initial"><p>Waiting for Player {{opponentNumber}} to arrive...</p></div>
   {{else}}
     <div class="stats-wrapper">
-      <div class="player-stats"><p>You are on turn {{playerTurn}} and have a score of {{playerScore}}.</p></div>
-      <div class="opponent-stats"><p>Your opponent is on turn {{opponentTurn}} and has a score of {{opponentScore}}.</p></div>
+      {{#if resultReady}}
+        <div class="results-wrapper">
+          <p>You <div class="emphasis">{{lastResult}}</div> the last round with <div class="emphasis">{{lastPlay}}</div>.</p>
+        </div>
+      {{/if}}
+      <div class="player-stats"><p>Your score: <div class="emphasis">{{playerScore}}</div></p></div>
+      <div class="opponent-stats"><p>Your opponent's score: <div class="emphasis">{{opponentScore}}</div></p></div>
     </div>
   {{/if}}
   {{#if hasTurn}}
-    <div class="play-message"><p>Play the next round.</p></div>
+    <div class="play-message"><p>It's your turn! Make a choice.</p></div>
     {{> choices}}
   {{else}}
     {{#unless opponentMissing}}
-      <div class="waiting-message"><p>Waiting for player {{opponentNumber}} to make a choice.</p></div>
+      <div class="waiting-message"><p>Waiting for player {{opponentNumber}} to make a choice...</p></div>
     {{/unless}}
   {{/if}}
 </template>
 
 
 <template name="layout">
-    <h1 class="title">Rock Paper Scissors</h1>
+    <h1 class="title">Rock, Paper, Scissors</h1>
     {{> yield}}
 </template>
 

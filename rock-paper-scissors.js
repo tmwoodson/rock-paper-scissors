@@ -55,7 +55,7 @@ var getHelpers = function(session) {
       return roundStats.result !== null;
     },
 
-    getLastResult: function() {
+    lastResult: function() {
       var roundStats = session.get('currentRound');
       var result = null;
       if (roundStats.result) {
@@ -68,6 +68,14 @@ var getHelpers = function(session) {
         }
       }
       return result;
+    },
+
+    lastPlay: function() {
+      var roundStats = session.get('currentRound');
+      var lastPlay = roundStats[session.get('player')._id];
+      console.log('here is the last play:', lastPlay)
+      console.log('here is the last round:', roundStats);
+      return lastPlay;
     }
   }
 };
@@ -138,8 +146,10 @@ var init = function(session) {
         updateTurn(session);
       },
       changed: function(id, fields) {
-        session.set('currentRound', $.extend(session.get('currentRound'), fields));
         updateTurn(session);
+        Meteor.call('getRound', id, function(err, result) {
+          session.set('currentRound', result);
+        });
       }
     });
 };
@@ -192,10 +202,9 @@ if (Meteor.isServer) {
           var opponentChoice = {'_id': round[opponentNum], 'choice': round[round[opponentNum]]};
           data._id = data.playerId;
           var result = getResult(data, opponentChoice);
-          var roundUpdates = {};
-          roundUpdates[data.playerId] = data.choice;
-          roundUpdates.result = result;
-          Rounds.update(round._id, roundUpdates);
+          round[data.playerId] = data.choice;
+          round.result = result;
+          Rounds.update(round._id, round);
           Players.update(data.playerId, {$inc: {turn: 1} });
           updatePlayerScores(data.playerId, round[opponentNum], result);
         }
@@ -209,6 +218,11 @@ if (Meteor.isServer) {
         } else {
           return Players.insert({'player': number, 'turn': 0, 'score': 0});
         }
+      },
+
+      'getRound': function(id) {
+        var found = Rounds.findOne({'_id': id});
+        return found;
       }
     });
 
