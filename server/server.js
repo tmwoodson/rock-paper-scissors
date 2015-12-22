@@ -1,7 +1,10 @@
+// getOpponentNumber(1) = 2; getOpponentNumber(2) = 1
 var getOpponentNumber = function(playerNumber) {
   return (playerNumber === 1 || playerNumber === '1') ? 2 : 1;
 };
 
+// Updates both players' scores at the end of the round.
+// Unless it's a tie, result is equal to either id1 or id2.
 var updatePlayerScores = function(id1, id2, result) {
   if (result === 'tie') {
     Players.update(id1, {$inc: {score: 1} });
@@ -19,7 +22,7 @@ var getResult = function(player1, player2) {
     return 'tie';
   }
   if (player1.choice === 'rock') {
-    return (player2.choice === 'scissors') ? player2._id : player1._id;
+    return (player2.choice === 'scissors') ? player1._id : player2._id;
   } else if (player1.choice === 'scissors') {
     return (player2.choice === 'rock') ? player2._id : player1._id;
   } else if (player1.choice === 'paper') {

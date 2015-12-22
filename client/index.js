@@ -70,8 +70,6 @@ var getHelpers = function(session) {
     lastPlay: function() {
       var roundStats = session.get('currentRound');
       var lastPlay = roundStats[session.get('player')._id];
-      console.log('here is the last play:', lastPlay)
-      console.log('here is the last round:', roundStats);
       return lastPlay;
     }
   }
@@ -81,6 +79,53 @@ var onButtonClick = function(e, session) {
   var choice = $(e.target).attr('class');
   var data = {choice: choice, playerId: session.get('player')._id, playerNum: session.get('player').player};
   Meteor.call('submitChoice', data);  
+};
+
+/*
+ * Helper functions that return callbacks used in observeChanges handles
+ */
+
+var opponentCallbacks = function(session) {
+  return {
+      added: function(id, fields) {
+        fields._id = id;
+        session.set('opponentMissing', false);
+        session.set('hasTurn', true);
+        session.set('opponent', fields);
+      },
+      changed: function(id, fields) {
+        fields._id = id;
+        session.set('opponent', $.extend(session.get('opponent'), fields));
+        updateTurn(session);
+      }
+    };
+};
+
+var playerCallbacks = function(session) {
+  return {
+      added: function(id, fields) {
+        fields._id = id;
+        session.set('player', fields);
+      },
+      changed: function(id, fields) {
+        session.set('player', $.extend(session.get('player'), fields));
+        updateTurn(session);
+      }
+    };
+};
+
+var roundCallbacks = function(session) {
+  return {
+      added: function(id, fields) {
+        updateTurn(session);
+      },
+      changed: function(id, fields) {
+        updateTurn(session);
+        Meteor.call('getRound', id, function(err, result) {
+          session.set('currentRound', result);
+        });
+      }
+    };
 };
 
 //Utility function to initialize a player's session and data
@@ -96,46 +141,18 @@ var init = function(session) {
 
     Meteor.call('getPlayer', playerNumber);
 
+    // Sets up handles to watch for changes in server and update session variables accordingly
     var opponent = Players.find({'player': opponentNumber});
-    var opponentHandle = opponent.observeChanges({
-      added: function(id, fields) {
-        fields._id = id;
-        session.set('opponentMissing', false);
-        session.set('hasTurn', true);
-        session.set('opponent', fields);
-      },
-      changed: function(id, fields) {
-        fields._id = id;
-        session.set('opponent', $.extend(session.get('opponent'), fields));
-        updateTurn(session);
-      }
-    });
+    var opponentHandle = opponent.observeChanges(opponentCallbacks(session));
 
     var player = Players.find({'player': playerNumber});
-    var playerHandle = player.observeChanges({
-      added: function(id, fields) {
-        fields._id = id;
-        session.set('player', fields);
-      },
-      changed: function(id, fields) {
-        session.set('player', $.extend(session.get('player'), fields));
-        updateTurn(session);
-      }
-    });
+    var playerHandle = player.observeChanges(playerCallbacks(session));
 
     var rounds = Rounds.find({});
-    var roundsHandle = rounds.observeChanges({
-      added: function(id, fields) {
-        updateTurn(session);
-      },
-      changed: function(id, fields) {
-        updateTurn(session);
-        Meteor.call('getRound', id, function(err, result) {
-          session.set('currentRound', result);
-        });
-      }
-    });
+    var roundsHandle = rounds.observeChanges(roundCallbacks(session));
 };
+
+
 
 Template.player.helpers(getHelpers(Session));
 
